@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.IdentityModel.Tokens;
@@ -18,6 +19,15 @@ namespace JWT_WebApi.Controllers
         public AuthenticationController(IConfiguration configuration)
         {
             _configuration=configuration;
+        }
+
+        [HttpGet, Authorize]
+        public ActionResult<object> GetMe()
+        {
+            var userName = User?.Identity?.Name;
+            var name = User.FindFirstValue(ClaimTypes.Name);
+            var role = User.FindFirstValue(ClaimTypes.Role);
+            return Ok(new {name,role});
         }
 
         [HttpPost("register")]
